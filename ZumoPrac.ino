@@ -65,7 +65,7 @@ void stateHalt()
 
 /* -----------STATE CHOICE---------- */
 
-void selectState()
+void selectState() {
  
   position = reflectanceSensors.readLine(sensors);
 
