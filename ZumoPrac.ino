@@ -59,6 +59,9 @@ void selectState() {
  
   position = reflectanceSensors.readLine(sensors);
 
+  Serial0.println("pos: " + position);
+  Serial.println("pos: " + position);
+
   if(state == STATE_FORWARD)
   {
     
