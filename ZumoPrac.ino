@@ -66,8 +66,8 @@ void selectState() {
  
   position = reflectanceSensors.readLine(sensors);
 
-  Serial0.println("pos: " + position);
-  Serial.println("pos: " + position);
+  Serial0.println(position-0);
+  Serial.println(position-0);
 
   if(state == STATE_FORWARD)
   {
@@ -98,7 +98,6 @@ void selectState() {
     }
     else if((sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]) < 500)
     {
-      if void_count 
       next_state = STATE_HALT;
     }
   }
