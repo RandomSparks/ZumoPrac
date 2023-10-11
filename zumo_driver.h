@@ -1,3 +1,22 @@
+  void battTest()
+  {
+    int batt = analogRead(A1);
+    Serial.print(batt);
+    if(batt < 3){
+      Serial0.print(" Battery OK!");
+      Serial.print(" Battery OK!");
+
+
+    }else{
+      Serial0.print(" Battery too low, goodnight...");
+      Serial.print(" Battery too low, goodnight...");
+      exit(0);
+      
+    }
+
+
+  }
+
 void setup()
 {
   //Setup the local serial interface
@@ -5,6 +24,16 @@ void setup()
 
   //Setup the wireless interface
   Serial0.begin(115200);
+
+    pinMode(13, OUTPUT);
+  digitalWrite(13, HIGH);
+  pinMode(A1, OUTPUT);
+
+//Test battery voltage.
+  battTest();
+  
+
+
   
   // Initialize the reflectance sensors module
   reflectanceSensors.init();
@@ -17,8 +46,7 @@ void setup()
   Serial0.println("calibrating");
 
   // Turn on LED to indicate we are in calibration mode
-  pinMode(13, OUTPUT);
-  digitalWrite(13, HIGH);
+
 
   // Wait 1 second and then begin automatic sensor calibration
   // by rotating in place to sweep the sensors over the line
