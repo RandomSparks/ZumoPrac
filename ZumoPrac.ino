@@ -26,12 +26,12 @@ int state = STATE_FORWARD;
 // Create a variable to hold the next state.  This should also be set to the default state.
 int next_state = STATE_FORWARD;
 
-uint8_t mode[] = {LINE_FOLLOW_MODE, JUMP_GAP_MODE, FINISH_MODE};
-uint8_t current_mode = 0;
+uint8_t mode[] = {LINE_FOLLOW_MODE, JUMP_GAP_MODE, LINE_FOLLOW_MODE, FINISH_MODE};
+uint8_t current_mode_num = 0;
 
 void stateForward()
 {
-  Serial.println("forward");
+  Serial.println("forward");+
   Serial0.println("forward");
   motors.setSpeeds(SPEED_MAX, SPEED_MAX);
 }
@@ -63,7 +63,7 @@ void stateHalt()
 
 void selectState()
 {
-  switch (mode[current_mode])
+  switch (mode[current_mode_num])
   {
   case LINE_FOLLOW_MODE:
     line_follow();
@@ -72,6 +72,13 @@ void selectState()
   default:
     break;
   }
+  
+  while (mode[current_mode_num] == FINISH_MODE)
+  {
+    stateHalt();
+    Serial.println("Finished!");
+  }
+  
 }
 
 void line_follow()
