@@ -27,7 +27,7 @@ int state = STATE_FORWARD;
 int next_state = STATE_FORWARD;
 
 uint8_t mode[] = {LINE_FOLLOW_MODE, JUMP_GAP_MODE, FINISH_MODE};
-uint8_t current_mode = mode[0];
+uint8_t current_mode = 0;
 
 void stateForward()
 {
@@ -63,7 +63,15 @@ void stateHalt()
 
 void selectState()
 {
-  line_follow();
+  switch (mode[current_mode])
+  {
+  case LINE_FOLLOW_MODE:
+    line_follow();
+    break;
+  
+  default:
+    break;
+  }
 }
 
 void line_follow()
@@ -146,5 +154,6 @@ void line_follow()
       stateHalt();
     }
   }
+  current_mode++;
 }
 #include "zumo_driver.h"
