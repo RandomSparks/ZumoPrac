@@ -1,4 +1,5 @@
 #include "zumo_state.h"
+#include "zumo_driver.h"
 
 #define SPEED_MAX 200
 #define SPEED_HALT 0
@@ -22,16 +23,6 @@ int state = STATE_FORWARD;
 // Create a variable to hold the next state.  This should also be set to the default state.
 int next_state = STATE_FORWARD;
 
-/* -----------STATE IMPLEMENTATION---------- */
-
-// Each state should be implemented by a function.
-// Each function should also report its state to the wireless serial 
-
-// Serial  - usb connected serial interface
-// Serial0 - wireless connected serial interface
-
-// Each state implements a set of actions.  In this case, we can set the motor
-// speeds.
 
 void stateForward()
 {
@@ -142,6 +133,3 @@ void selectState() {
   }
 }
 
-/* -----------END STATE CHOICE---------- */
-
-#include "zumo_driver.h"
