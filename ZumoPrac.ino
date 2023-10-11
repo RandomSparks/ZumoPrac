@@ -83,8 +83,96 @@ void selectState()
   
 }
 
+void stateSwitch(state){
+      switch (state)
+    {
+    case STATE_FORWARD:
+      stateForward();
+      break;
+
+    case STATE_LEFT:
+      stateLeft();
+      break;
+
+    case STATE_RIGHT:
+      stateRight();
+      break;
+
+    case STATE_HALT:
+      stateHalt();
+      break;
+
+    default:
+      stateHalt();
+    }
+}
+
 //Modes
 void line_follow()
+{
+  bool no_line = false;
+
+  while (!no_line)
+  {
+    position = reflectanceSensors.readLine(sensors);
+    if (state == STATE_FORWARD)
+    {
+      if (position < 1000) // Put your condition here
+      {
+        // Write your desired state here
+        next_state = STATE_LEFT;
+      }
+      else if (position > 4000) // Put your condition here
+      {
+        next_state = STATE_RIGHT;
+      }
+      else if ((sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]) < 500)
+      {
+        no_line = true;
+      }
+    }
+
+    if (state == STATE_LEFT)
+    {
+      if (position > 2000) // Put your condition here
+      {
+        // Write your desired state here
+        next_state = STATE_FORWARD;
+      }
+      else if ((sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]) < 500)
+      {
+        no_line = true;
+      }
+    }
+
+    if (state == STATE_RIGHT)
+    {
+      if (position < 3000) // Put your condition here
+      {
+        // Write your desired state here
+        next_state = STATE_FORWARD;
+      }
+      else if ((sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]) < 500)
+      {
+        no_line = true;
+      }
+    }
+
+    if (no_line)
+    {
+      Serial0.println("No line detected!");
+      next_state = STATE_HALT;
+    }
+
+    stateSwitch(next_state);
+
+
+  }
+  current_mode++;
+}
+
+//Jump Gap mode
+void jump_gap()
 {
   bool no_line = false;
 
