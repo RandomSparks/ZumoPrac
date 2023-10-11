@@ -72,12 +72,12 @@ void selectState()
 
 void line_follow()
 {
+  bool no_line = false;
 
   while (!no_line)
   {
     if (state == STATE_FORWARD)
     {
-      bool no_line = false;
       if (position < 1000) // Put your condition here
       {
         // Write your desired state here
@@ -123,7 +123,7 @@ void line_follow()
     {
       next_state = STATE_HALT;
     }
-    
+
     state = next_state;
 
     switch (state)
