@@ -29,6 +29,8 @@ int next_state = STATE_FORWARD;
 uint8_t mode[] = {LINE_FOLLOW_MODE, JUMP_GAP_MODE, LINE_FOLLOW_MODE, FINISH_MODE};
 uint8_t current_mode_num = 0;
 
+
+//States
 void stateForward()
 {
   Serial.println("forward");+
@@ -81,6 +83,7 @@ void selectState()
   
 }
 
+//Modes
 void line_follow()
 {
   bool no_line = false;
@@ -163,4 +166,6 @@ void line_follow()
   }
   current_mode++;
 }
+
+
 #include "zumo_driver.h"
