@@ -1,6 +1,6 @@
 #include "zumo_state.h"
 
-#define SPEED_MAX 200
+#define SPEED_MAX 150
 #define SPEED_HALT 0
 
 /* -----------STATE ENCODING---------- */
