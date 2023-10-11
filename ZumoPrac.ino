@@ -63,11 +63,7 @@ void stateHalt()
 
 void selectState()
 {
-
-  position = reflectanceSensors.readLine(sensors);
-
-  Serial0.println("pos: " + position);
-  Serial.println("pos: " + position);
+  line_follow();
 }
 
 void line_follow()
@@ -76,6 +72,7 @@ void line_follow()
 
   while (!no_line)
   {
+    position = reflectanceSensors.readLine(sensors);
     if (state == STATE_FORWARD)
     {
       if (position < 1000) // Put your condition here
@@ -121,6 +118,7 @@ void line_follow()
 
     if (no_line)
     {
+      Serial0.println("No line detected!");
       next_state = STATE_HALT;
     }
 
