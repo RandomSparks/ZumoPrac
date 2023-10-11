@@ -14,6 +14,10 @@
 #define STATE_RIGHT   2
 #define STATE_HALT    3
 
+#define FINISH_MODE 0
+#define LINE_FOLLOW_MODE 1
+#define JUMP_GAP_MODE 2
+#define WALL_FOLLOW_MODE 3
 /* ---------END STATE ENCODING---------- */
 
 // Create a variable to hold a state.  This should be set to the default state.
@@ -21,6 +25,9 @@ int state = STATE_FORWARD;
 
 // Create a variable to hold the next state.  This should also be set to the default state.
 int next_state = STATE_FORWARD;
+
+uint8_t mode[] = {LINE_FOLLOW_MODE, JUMP_GAP_MODE, FINISH_MODE};
+uint8_t current_mode = mode[0];
 
 
 void stateForward()
@@ -91,6 +98,7 @@ void selectState() {
     }
     else if((sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]) < 500)
     {
+      if void_count 
       next_state = STATE_HALT;
     }
   }
