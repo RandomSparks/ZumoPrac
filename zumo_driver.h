@@ -1,21 +1,4 @@
-  void battTest()
-  {
-    int batt = analogRead(A1);
-    Serial.print(batt);
-    if(batt < 3){
-      Serial0.print(" Battery OK!");
-      Serial.print(" Battery OK!");
 
-
-    }else{
-      Serial0.print(" Battery too low, goodnight...");
-      Serial.print(" Battery too low, goodnight...");
-      exit(0);
-      
-    }
-
-
-  }
 
 void setup()
 {
@@ -30,7 +13,20 @@ void setup()
   pinMode(A1, OUTPUT);
 
 //Test battery voltage.
-  battTest();
+
+  //Test battery voltage.
+  float batt = analogRead(A1);
+  Serial.println(batt);
+  Serial0.println(batt);
+  if (batt < 1) {
+    Serial0.print(" Battery OK!");
+    Serial.print(" Battery OK!");
+  } else {
+    Serial0.print(" Battery too low, goodnight...");
+    Serial.print(" Battery too low, goodnight...");
+    delay(100);
+   // exit(0);
+  }
   
 
 
