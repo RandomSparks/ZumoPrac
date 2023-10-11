@@ -1,5 +1,4 @@
 #include "zumo_state.h"
-#include "zumo_driver.h"
 
 #define SPEED_MAX 200
 #define SPEED_HALT 0
@@ -68,7 +67,7 @@ void selectState() {
       // Write your desired state here
       next_state = STATE_LEFT;
     }
-    else if(position > 4500 && (sensors[5] < 500))
+    else if((sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]) < 500)
     {
       next_state = STATE_HALT;
     }
@@ -87,7 +86,7 @@ void selectState() {
       // Write your desired state here
       next_state = STATE_FORWARD;
     }
-    else if(position > 4500 && (sensors[5] < 500))
+    else if((sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]) < 500)
     {
       next_state = STATE_HALT;
     }
@@ -100,8 +99,7 @@ void selectState() {
       // Write your desired state here
       next_state = STATE_FORWARD;
     }
-     // if the sensor is reporting position to be over 4500, and the right most sensor is not over the line, then halt.
-    else if(position > 4500 && (sensors[5] < 500))
+    else if((sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]) < 500)
     {
       next_state = STATE_HALT;
     }
@@ -133,3 +131,5 @@ void selectState() {
   }
 }
 
+
+#include "zumo_driver.h"
