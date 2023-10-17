@@ -18,6 +18,10 @@
 #define LINE_FOLLOW_MODE 1
 #define JUMP_GAP_MODE 2
 #define WALL_FOLLOW_MODE 3
+#define ROTATE_PUSH_MODE 4
+
+#define GAP_JUMP_DELAY 500 // milliseconds to turn left once a line is found before resuming line following.
+
 /* ---------END STATE ENCODING---------- */
 
 // Create a variable to hold a state.  This should be set to the default state.
@@ -29,12 +33,11 @@ int next_state = STATE_FORWARD;
 uint8_t mode[] = {LINE_FOLLOW_MODE, JUMP_GAP_MODE, LINE_FOLLOW_MODE, FINISH_MODE};
 uint8_t current_mode_num = 0;
 
-
-//States
+// motor output States
 void stateForward()
 {
-  Serial.println("forward");+
-  Serial0.println("forward");
+  Serial.println("forward");
+  +Serial0.println("forward");
   motors.setSpeeds(SPEED_MAX, SPEED_MAX);
 }
 
@@ -70,51 +73,69 @@ void selectState()
   case LINE_FOLLOW_MODE:
     line_follow();
     break;
-  
+  case JUMP_GAP_MODE:
+    jump_gap();
+    break;
+  case WALL_FOLLOW_MODE:
+    break; // TODO: implement wall follow mode
+  case ROTATE_PUSH_MODE:
+    break; // TODO: implement rotate push mode
+  case FINISH_MODE:
+    finish();
+    break;
+
   default:
+    finish();
     break;
   }
-  
-  while (mode[current_mode_num] == FINISH_MODE)
+
+  current_mode++; // increment to the next mode after each mode is completed.
+}
+
+void stateSwitch(state)
+{
+  switch (state)
   {
+  case STATE_FORWARD:
+    stateForward();
+    break;
+
+  case STATE_LEFT:
+    stateLeft();
+    break;
+
+  case STATE_RIGHT:
+    stateRight();
+    break;
+
+  case STATE_HALT:
     stateHalt();
-    Serial.println("Finished!");
+    break;
+
+  default:
+    stateHalt();
   }
-  
 }
 
-void stateSwitch(state){
-      switch (state)
-    {
-    case STATE_FORWARD:
-      stateForward();
-      break;
+// Modes
 
-    case STATE_LEFT:
-      stateLeft();
-      break;
-
-    case STATE_RIGHT:
-      stateRight();
-      break;
-
-    case STATE_HALT:
-      stateHalt();
-      break;
-
-    default:
-      stateHalt();
-    }
+void finish()
+{
+  stateSwitch(STATE_HALT);
+  Serial0.println("Finished!");
+  while (true)
+  {
+  } // do nothing
 }
 
-//Modes
 void line_follow()
 {
-  bool no_line = false;
+  bool stop_flag = false; // if no line or a stop line is detected, set to true to exit loop.
 
-  while (!no_line)
+  while (!stop_flag)
   {
     position = reflectanceSensors.readLine(sensors);
+    int sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
     if (state == STATE_FORWARD)
     {
       if (position < 1000) // Put your condition here
@@ -126,9 +147,9 @@ void line_follow()
       {
         next_state = STATE_RIGHT;
       }
-      else if ((sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]) < 500)
+      else if (sensor_total < 50 || sensor_total > 2000)
       {
-        no_line = true;
+        stop_flag = true;
       }
     }
 
@@ -139,9 +160,9 @@ void line_follow()
         // Write your desired state here
         next_state = STATE_FORWARD;
       }
-      else if ((sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]) < 500)
+      else if (sensor_total < 50 || sensor_total > 2000)
       {
-        no_line = true;
+        stop_flag = true;
       }
     }
 
@@ -152,108 +173,42 @@ void line_follow()
         // Write your desired state here
         next_state = STATE_FORWARD;
       }
-      else if ((sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]) < 500)
+      else if (sensor_total < 50 || sensor_total > 2000)
       {
-        no_line = true;
+        stop_flag = true;
       }
     }
 
-    if (no_line)
+    if (stop_flag)
     {
       Serial0.println("No line detected!");
       next_state = STATE_HALT;
     }
-
-    stateSwitch(next_state);
-
-
+    stateSwitch(next_state); // select/set motor output states
   }
-  current_mode++;
 }
 
-//Jump Gap mode
+// Jump Gap mode
 void jump_gap()
 {
-  bool no_line = false;
-
-  while (!no_line)
+  stateSwitch(STATE_FORWARD);
+  bool line_detected = false;
+  while (!line_detected)
   {
     position = reflectanceSensors.readLine(sensors);
-    if (state == STATE_FORWARD)
+    int sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
+    if (sensor_total > 500)
     {
-      if (position < 1000) // Put your condition here
-      {
-        // Write your desired state here
-        next_state = STATE_LEFT;
-      }
-      else if (position > 4000) // Put your condition here
-      {
-        next_state = STATE_RIGHT;
-      }
-      else if ((sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]) < 500)
-      {
-        no_line = true;
-      }
+      line_detected = true;
     }
-
-    if (state == STATE_LEFT)
+    else
     {
-      if (position > 2000) // Put your condition here
-      {
-        // Write your desired state here
-        next_state = STATE_FORWARD;
-      }
-      else if ((sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]) < 500)
-      {
-        no_line = true;
-      }
-    }
-
-    if (state == STATE_RIGHT)
-    {
-      if (position < 3000) // Put your condition here
-      {
-        // Write your desired state here
-        next_state = STATE_FORWARD;
-      }
-      else if ((sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]) < 500)
-      {
-        no_line = true;
-      }
-    }
-
-    if (no_line)
-    {
-      Serial0.println("No line detected!");
-      next_state = STATE_HALT;
-    }
-
-    state = next_state;
-
-    switch (state)
-    {
-    case STATE_FORWARD:
-      stateForward();
-      break;
-
-    case STATE_LEFT:
-      stateLeft();
-      break;
-
-    case STATE_RIGHT:
-      stateRight();
-      break;
-
-    case STATE_HALT:
-      stateHalt();
-      break;
-
-    default:
-      stateHalt();
+      stateSwitch(STATE_FORWARD);
     }
   }
-  current_mode++;
+  stateSwitch(STATE_RIGHT);
+  delay(GAP_JUMP_DELAY);
+  stateSwitch(STATE_HALT); // line detected, stop and exit.
 }
-
 
 #include "zumo_driver.h"
