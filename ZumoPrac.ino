@@ -89,12 +89,12 @@ void selectState()
     break;
   }
 
-  current_mode++; // increment to the next mode after each mode is completed.
+  current_mode_num++; // increment to the next mode after each mode is completed.
 }
 
-void stateSwitch(state)
+void stateSwitch(int _state)
 {
-  switch (state)
+  switch (_state)
   {
   case STATE_FORWARD:
     stateForward();
