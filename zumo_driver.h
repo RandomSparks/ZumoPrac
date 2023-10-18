@@ -17,7 +17,7 @@ void setup()
   int batt = analogRead(A1);
   Serial.println(batt);
   Serial0.println(batt);
-  if (batt > 500) {
+  if (batt > 300) {
     Serial0.print(" Battery OK!");
     Serial.print(" Battery OK!");
   } else {
