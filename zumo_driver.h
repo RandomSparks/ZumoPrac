@@ -8,7 +8,7 @@ void setup()
   //Setup the wireless interface
   Serial0.begin(115200);
 
-    pinMode(13, OUTPUT);
+  pinMode(13, OUTPUT);
   digitalWrite(13, HIGH);
 
 //Test battery voltage.
@@ -17,7 +17,7 @@ void setup()
   float batt = analogRead(A1);
   Serial.println(batt);
   Serial0.println(batt);
-  if (batt < 5.00f) {
+  if (batt < 330f) {
     Serial0.print(" Battery OK!");
     Serial.print(" Battery OK!");
   } else {
