@@ -20,7 +20,7 @@
 #define WALL_FOLLOW_MODE 3
 #define ROTATE_PUSH_MODE 4
 
-#define ROTATE_DELAY 100 // milliseconds to turn left once a line is found before resuming line following.
+#define ROTATE_DELAY 1000 // milliseconds to turn left once a line is found before resuming line following.
 #define FORWARDS_DELAY 2000
 
 /* ---------END STATE ENCODING---------- */
