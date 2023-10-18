@@ -135,6 +135,8 @@ void line_follow()
   while (!stop_flag)
   {
     Serial0.print("line follow - ");
+    Serial0.print(position);
+    Serial0.print(" - ");
     position = reflectanceSensors.readLine(sensors);
     int sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
     if (state == STATE_FORWARD)
@@ -149,32 +151,23 @@ void line_follow()
         next_state = STATE_RIGHT;
       }
     }
-
-    if (state == STATE_RIGHT)
+    else if (state == STATE_RIGHT || state == STATE_LEFT)
     {
-      if (position > 2000) // Put your condition here
+      if (position < 3500 || position > 1500) // Put your condition here
       {
         // Write your desired state here
         next_state = STATE_FORWARD;
       }
     }
 
-    if (state == STATE_LEFT)
-    {
-      if (position < 3000) // Put your condition here
-      {
-        // Write your desired state here
-        next_state = STATE_FORWARD;
-      }
-    }
-
-    if (sensor_total < 50 || sensor_total > 2000)
+    if (sensor_total < 50 || sensor_total > 3000)
     {
       stop_flag = true;
       Serial0.println("No line detected!");
       next_state = STATE_HALT;
     }
-    stateSwitch(next_state); // select/set motor output states
+    state = next_state;
+    stateSwitch(state); // select/set motor output states
   }
 }
 
