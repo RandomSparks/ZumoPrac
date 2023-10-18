@@ -77,7 +77,8 @@ void selectState()
     jump_gap();
     break;
   case WALL_FOLLOW_MODE:
-    break; // TODO: implement wall follow mode
+    wall_follow();
+    break;
   case ROTATE_PUSH_MODE:
     break; // TODO: implement rotate push mode
   case FINISH_MODE:

@@ -24,7 +24,7 @@ void setup()
     Serial0.print(" Battery too low, goodnight...");
     Serial.print(" Battery too low, goodnight...");
     delay(100);
-   // exit(0);
+    exit(0);
   }
   
 
