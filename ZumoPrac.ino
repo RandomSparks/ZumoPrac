@@ -20,8 +20,8 @@
 #define WALL_FOLLOW_MODE 3
 #define ROTATE_PUSH_MODE 4
 
-#define ROTATE_DELAY 1000 // milliseconds to turn left once a line is found before resuming line following.
-#define FORWARDS_DELAY 2000
+#define ROTATE_DELAY 1000  // milliseconds to rotate once a line is found before resuming line following.
+#define FORWARDS_DELAY 500 // milliseconds to drive forward after finding the line before rotating.
 
 /* ---------END STATE ENCODING---------- */
 
@@ -46,14 +46,14 @@ void stateLeft()
 {
   Serial.println("left");
   Serial0.println("left");
-  motors.setSpeeds(SPEED_HALT, SPEED_MAX*2);
+  motors.setSpeeds(SPEED_HALT, SPEED_MAX * 2);
 }
 
 void stateRight()
 {
   Serial.println("right");
   Serial0.println("right");
-  motors.setSpeeds(SPEED_MAX*2, SPEED_HALT);
+  motors.setSpeeds(SPEED_MAX * 2, SPEED_HALT);
 }
 
 void stateHalt()
@@ -143,25 +143,26 @@ void line_follow()
     int sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
     if (state == STATE_FORWARD)
     {
-      if (position < 1000) // Put your condition here
+      if (position < 1000)
       {
-        // Write your desired state here
         next_state = STATE_LEFT;
       }
-      else if (position > 4000) // Put your condition here
+      else if (position > 4000)
       {
         next_state = STATE_RIGHT;
       }
-      else next_state = state;
+      else
+        next_state = state; // set the next state the same as the current state
     }
     else if (state == STATE_RIGHT || state == STATE_LEFT)
     {
-      if (position < 3500 && position > 1500) // Put your condition here
+      if (position < 3500 && position > 1500)
       {
-        // Write your desired state here
+
         next_state = STATE_FORWARD;
       }
-      else next_state = state;
+      else
+        next_state = state; // set the next state the same as the current state
     }
 
     if (sensor_total < 500 || sensor_total > 3000)
@@ -170,8 +171,8 @@ void line_follow()
       Serial0.println("No line detected!");
       next_state = STATE_HALT;
     }
-    stateSwitch(next_state); // select/set motor output states
     state = next_state;
+    stateSwitch(state); // select/set motor output states
   }
 }
 
@@ -195,31 +196,41 @@ void jump_gap()
       stateSwitch(STATE_FORWARD);
     }
   }
-  motors.setSpeeds(-SPEED_MAX, SPEED_MAX);
-  delay(ROTATE_DELAY);
+
   motors.setSpeeds(SPEED_MAX, SPEED_MAX);
   delay(FORWARDS_DELAY);
+
+  // potential alternative to above, drive forwards until driving past line, then rotate.
+  // int sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
+  // while (sensor_total > 2000)
+  // {
+  //   position = reflectanceSensors.readLine(sensors);
+  //   sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
+  //   stateSwitch(STATE_FORWARD);
+  // }
+
+  motors.setSpeeds(-SPEED_MAX, SPEED_MAX);
+  delay(ROTATE_DELAY);
   stateSwitch(STATE_HALT); // line detected, stop and exit.
 }
 
-void wall_follow(){
-  if ((sensors[0]+sensors[5])<10)
+void wall_follow()
+{
+  if ((sensors[0] + sensors[5]) < 10)
   {
     next_state = STATE_FORWARD;
   }
-  
-  if (sensors[0]>0)
+
+  if (sensors[0] > 0)
   {
     next_state = STATE_RIGHT;
-  }else if (sensors[5]>0)
+  }
+  else if (sensors[5] > 0)
   {
     next_state = STATE_LEFT;
   }
 
-  
   stateSwitch(next_state);
-  
-
 }
 
 #include "zumo_driver.h"
