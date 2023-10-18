@@ -10,7 +10,6 @@ void setup()
 
     pinMode(13, OUTPUT);
   digitalWrite(13, HIGH);
-  pinMode(A1, OUTPUT);
 
 //Test battery voltage.
 
@@ -18,7 +17,7 @@ void setup()
   float batt = analogRead(A1);
   Serial.println(batt);
   Serial0.println(batt);
-  if (batt < 1) {
+  if (batt < 5.00f) {
     Serial0.print(" Battery OK!");
     Serial.print(" Battery OK!");
   } else {
