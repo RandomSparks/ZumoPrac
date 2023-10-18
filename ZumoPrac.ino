@@ -20,7 +20,7 @@
 #define WALL_FOLLOW_MODE 3
 #define ROTATE_PUSH_MODE 4
 
-#define GAP_JUMP_DELAY 500 // milliseconds to turn left once a line is found before resuming line following.
+#define GAP_JUMP_DELAY 3000 // milliseconds to turn left once a line is found before resuming line following.
 
 /* ---------END STATE ENCODING---------- */
 
@@ -121,8 +121,8 @@ void stateSwitch(int _state)
 
 void finish()
 {
-  stateSwitch(STATE_HALT);
   Serial0.println("Finished!");
+  stateSwitch(STATE_HALT);
   while (true)
   {
   } // do nothing
@@ -134,6 +134,7 @@ void line_follow()
 
   while (!stop_flag)
   {
+    Serial0.print("line follow - ");
     position = reflectanceSensors.readLine(sensors);
     int sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
     if (state == STATE_FORWARD)
@@ -195,6 +196,8 @@ void jump_gap()
   bool line_detected = false;
   while (!line_detected)
   {
+    
+    Serial0.print("jump gap - ");
     position = reflectanceSensors.readLine(sensors);
     int sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
     if (sensor_total > 500)
