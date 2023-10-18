@@ -155,7 +155,7 @@ void line_follow()
     }
     else if (state == STATE_RIGHT || state == STATE_LEFT)
     {
-      if (position < 3500 || position > 1500) // Put your condition here
+      if (position < 3500 && position > 1500) // Put your condition here
       {
         // Write your desired state here
         next_state = STATE_FORWARD;
