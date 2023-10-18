@@ -203,4 +203,24 @@ void jump_gap()
   stateSwitch(STATE_HALT); // line detected, stop and exit.
 }
 
+void wall_follow(){
+  if ((sensors[0]+sensors[5])<10)
+  {
+    next_state = STATE_FORWARD;
+  }
+  
+  if (sensors[0]>0)
+  {
+    next_state = STATE_RIGHT;
+  }else if (sensors[5]>0)
+  {
+    next_state = STATE_LEFT;
+  }
+
+  
+  stateSwitch(next_state);
+  
+
+}
+
 #include "zumo_driver.h"
