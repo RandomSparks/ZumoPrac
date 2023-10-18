@@ -20,7 +20,8 @@
 #define WALL_FOLLOW_MODE 3
 #define ROTATE_PUSH_MODE 4
 
-#define GAP_JUMP_DELAY 1500 // milliseconds to turn left once a line is found before resuming line following.
+#define ROTATE_DELAY 100 // milliseconds to turn left once a line is found before resuming line following.
+#define FORWARDS_DELAY 2000
 
 /* ---------END STATE ENCODING---------- */
 
@@ -45,14 +46,14 @@ void stateLeft()
 {
   Serial.println("left");
   Serial0.println("left");
-  motors.setSpeeds(SPEED_HALT, SPEED_MAX);
+  motors.setSpeeds(SPEED_HALT, SPEED_MAX*2);
 }
 
 void stateRight()
 {
   Serial.println("right");
   Serial0.println("right");
-  motors.setSpeeds(SPEED_MAX, SPEED_HALT);
+  motors.setSpeeds(SPEED_MAX*2, SPEED_HALT);
 }
 
 void stateHalt()
@@ -136,8 +137,8 @@ void line_follow()
   while (!stop_flag)
   {
     Serial0.print("line follow - ");
-    Serial0.print(position);
-    Serial0.print(" - ");
+    // Serial0.print(position);
+    // Serial0.print(" - ");
     position = reflectanceSensors.readLine(sensors);
     int sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
     if (state == STATE_FORWARD)
@@ -163,7 +164,7 @@ void line_follow()
       else next_state = state;
     }
 
-    if (sensor_total < 50 || sensor_total > 3000)
+    if (sensor_total < 500 || sensor_total > 3000)
     {
       stop_flag = true;
       Serial0.println("No line detected!");
@@ -195,7 +196,9 @@ void jump_gap()
     }
   }
   motors.setSpeeds(-SPEED_MAX, SPEED_MAX);
-  delay(GAP_JUMP_DELAY);
+  delay(ROTATE_DELAY);
+  motros.setSpeeds(SPEED_MAX, SPEED_MAX);
+  delay(FORWARDS_DELAY);
   stateSwitch(STATE_HALT); // line detected, stop and exit.
 }
 
