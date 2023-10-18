@@ -94,7 +94,7 @@ void selectState()
   current_mode_num++; // increment to the next mode after each mode is completed.
 }
 
-void stateSwitch(int _state)
+void setMotorState(int _state)
 {
   switch (_state)
   {
@@ -124,7 +124,7 @@ void stateSwitch(int _state)
 void finish()
 {
   Serial0.println("Finished!");
-  stateSwitch(STATE_HALT);
+  setMotorState(STATE_HALT);
   while (true)
   {
   } // do nothing
@@ -172,14 +172,14 @@ void line_follow()
       next_state = STATE_HALT;
     }
     state = next_state;
-    stateSwitch(state); // select/set motor output states
+    setMotorState(state); // select/set motor output states
   }
 }
 
 // Jump Gap mode
 void jump_gap()
 {
-  stateSwitch(STATE_FORWARD);
+  setMotorState(STATE_FORWARD);
   bool line_detected = false;
   while (!line_detected)
   {
@@ -193,7 +193,7 @@ void jump_gap()
     }
     else
     {
-      stateSwitch(STATE_FORWARD);
+      setMotorState(STATE_FORWARD);
     }
   }
 
@@ -206,12 +206,12 @@ void jump_gap()
   // {
   //   position = reflectanceSensors.readLine(sensors);
   //   sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
-  //   stateSwitch(STATE_FORWARD);
+  //   setMotorState(STATE_FORWARD);
   // }
 
   motors.setSpeeds(-SPEED_MAX, SPEED_MAX);
   delay(ROTATE_DELAY);
-  stateSwitch(STATE_HALT); // line detected, stop and exit.
+  setMotorState(STATE_HALT); // line detected, stop and exit.
 }
 
 void wall_follow()
@@ -230,7 +230,7 @@ void wall_follow()
     next_state = STATE_LEFT;
   }
 
-  stateSwitch(next_state);
+  setMotorState(next_state);
 }
 
 #include "zumo_driver.h"
