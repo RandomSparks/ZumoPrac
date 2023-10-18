@@ -33,6 +33,7 @@ int next_state = STATE_FORWARD;
 
 uint8_t mode[] = {LINE_FOLLOW_MODE, JUMP_GAP_MODE, LINE_FOLLOW_MODE, FINISH_MODE};
 uint8_t current_mode_num = 0;
+int sensor_total = 0;
 
 // motor output States
 void stateForward()
@@ -140,7 +141,7 @@ void line_follow()
     // Serial0.print(position);
     // Serial0.print(" - ");
     position = reflectanceSensors.readLine(sensors);
-    int sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
+    sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
     if (state == STATE_FORWARD)
     {
       if (position < 1000)
@@ -186,7 +187,7 @@ void jump_gap()
 
     Serial0.print("jump gap - ");
     position = reflectanceSensors.readLine(sensors);
-    int sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
+    sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
     if (sensor_total > 500)
     {
       line_detected = true;
@@ -201,7 +202,7 @@ void jump_gap()
   delay(FORWARDS_DELAY);
 
   // potential alternative to above, drive forwards until driving past line, then rotate.
-  // int sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
+  // sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
   // while (sensor_total > 2000)
   // {
   //   position = reflectanceSensors.readLine(sensors);
@@ -216,21 +217,33 @@ void jump_gap()
 
 void wall_follow()
 {
-  if ((sensors[0] + sensors[5]) < 10)
+  // get initial sensor readings...
+  position = reflectanceSensors.readLine(sensors);
+  bool line_detected = false;
+  while (!line_detected)
   {
-    next_state = STATE_FORWARD;
-  }
+    position = reflectanceSensors.readLine(sensors); // refresh sensor readings each loop.
 
-  if (sensors[0] > 0)
-  {
-    next_state = STATE_RIGHT;
-  }
-  else if (sensors[5] > 0)
-  {
-    next_state = STATE_LEFT;
-  }
+    if ((sensors[0] + sensors[5]) < 500)
+    {
+      next_state = STATE_FORWARD;
+    }
+    else if (sensors[0] > 300)
+    {
+      next_state = STATE_RIGHT;
+    }
+    else if (sensors[5] > 300)
+    {
+      next_state = STATE_LEFT;
+    }
 
-  setMotorState(next_state);
+    if ((sensors[1] + sensors[2] + sensors[3] + sensors[4]) > 500)
+    {
+      line_detected = true;
+    }
+
+    setMotorState(next_state);
+  }
 }
 
 #include "zumo_driver.h"
