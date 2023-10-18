@@ -14,10 +14,10 @@ void setup()
 //Test battery voltage.
 
   //Test battery voltage.
-  float batt = analogRead(A1);
+  int batt = analogRead(A1);
   Serial.println(batt);
   Serial0.println(batt);
-  if (batt < 330f) {
+  if (batt < 330) {
     Serial0.print(" Battery OK!");
     Serial.print(" Battery OK!");
   } else {
