@@ -1,6 +1,6 @@
 #include "zumo_state.h"
 
-#define SPEED_MAX 200
+#define SPEED_MAX 100
 #define SPEED_HALT 0
 
 /* -----------STATE ENCODING---------- */
@@ -151,6 +151,7 @@ void line_follow()
       {
         next_state = STATE_RIGHT;
       }
+      else next_state = state;
     }
     else if (state == STATE_RIGHT || state == STATE_LEFT)
     {
@@ -159,6 +160,7 @@ void line_follow()
         // Write your desired state here
         next_state = STATE_FORWARD;
       }
+      else next_state = state;
     }
 
     if (sensor_total < 50 || sensor_total > 3000)
@@ -167,8 +169,8 @@ void line_follow()
       Serial0.println("No line detected!");
       next_state = STATE_HALT;
     }
+    stateSwitch(next_state); // select/set motor output states
     state = next_state;
-    stateSwitch(state); // select/set motor output states
   }
 }
 
