@@ -17,12 +17,12 @@ void setup()
   int batt = analogRead(A1);
   Serial.println(batt);
   Serial0.println(batt);
-  if (batt > 300) {
-    Serial0.print(" Battery OK!");
-    Serial.print(" Battery OK!");
+  if (batt > 500) {
+    Serial0.print(" Battery OK! ");
+    Serial.print(" Battery OK! ");
   } else {
-    Serial0.print(" Battery too low, goodnight...");
-    Serial.print(" Battery too low, goodnight...");
+    Serial0.print(" Battery too low, goodnight... ");
+    Serial.print(" Battery too low, goodnight...  ");
     delay(100);
     exit(0);
   }
@@ -55,6 +55,8 @@ void setup()
   {
     reflectanceSensors.calibrate();
     delay(20);
+    Serial.println(i);
+    Serial0.println(i);
   }
 
   // Finish editing here--------
