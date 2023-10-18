@@ -20,7 +20,7 @@
 #define WALL_FOLLOW_MODE 3
 #define ROTATE_PUSH_MODE 4
 
-#define GAP_JUMP_DELAY 3000 // milliseconds to turn left once a line is found before resuming line following.
+#define GAP_JUMP_DELAY 1500 // milliseconds to turn left once a line is found before resuming line following.
 
 /* ---------END STATE ENCODING---------- */
 
@@ -37,7 +37,7 @@ uint8_t current_mode_num = 0;
 void stateForward()
 {
   Serial.println("forward");
-  +Serial0.println("forward");
+  Serial0.println("forward");
   motors.setSpeeds(SPEED_MAX, SPEED_MAX);
 }
 
@@ -148,40 +148,29 @@ void line_follow()
       {
         next_state = STATE_RIGHT;
       }
-      else if (sensor_total < 50 || sensor_total > 2000)
-      {
-        stop_flag = true;
-      }
     }
 
-    if (state == STATE_LEFT)
+    if (state == STATE_RIGHT)
     {
       if (position > 2000) // Put your condition here
       {
         // Write your desired state here
         next_state = STATE_FORWARD;
       }
-      else if (sensor_total < 50 || sensor_total > 2000)
-      {
-        stop_flag = true;
-      }
     }
 
-    if (state == STATE_RIGHT)
+    if (state == STATE_LEFT)
     {
       if (position < 3000) // Put your condition here
       {
         // Write your desired state here
         next_state = STATE_FORWARD;
       }
-      else if (sensor_total < 50 || sensor_total > 2000)
-      {
-        stop_flag = true;
-      }
     }
 
-    if (stop_flag)
+    if (sensor_total < 50 || sensor_total > 2000)
     {
+      stop_flag = true;
       Serial0.println("No line detected!");
       next_state = STATE_HALT;
     }
@@ -196,7 +185,7 @@ void jump_gap()
   bool line_detected = false;
   while (!line_detected)
   {
-    
+
     Serial0.print("jump gap - ");
     position = reflectanceSensors.readLine(sensors);
     int sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
@@ -209,7 +198,7 @@ void jump_gap()
       stateSwitch(STATE_FORWARD);
     }
   }
-  stateSwitch(STATE_RIGHT);
+  motors.setSpeeds(-SPEED_MAX, SPEED_MAX);
   delay(GAP_JUMP_DELAY);
   stateSwitch(STATE_HALT); // line detected, stop and exit.
 }
