@@ -197,7 +197,7 @@ void jump_gap()
   }
   motors.setSpeeds(-SPEED_MAX, SPEED_MAX);
   delay(ROTATE_DELAY);
-  motros.setSpeeds(SPEED_MAX, SPEED_MAX);
+  motors.setSpeeds(SPEED_MAX, SPEED_MAX);
   delay(FORWARDS_DELAY);
   stateSwitch(STATE_HALT); // line detected, stop and exit.
 }
