@@ -18,6 +18,7 @@ void setup()
   Serial.println(batt);
   Serial0.println(batt);
   if (batt < 330) {
+
     Serial0.print(" Battery OK!");
     Serial.print(" Battery OK!");
   } else {
