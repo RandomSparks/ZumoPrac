@@ -1,6 +1,6 @@
 #include "zumo_state.h"
 
-#define SPEED_MAX 100
+#define SPEED_MAX 200
 #define SPEED_HALT 0
 
 /* -----------STATE ENCODING---------- */
@@ -17,10 +17,10 @@
 #define FINISH_MODE 0
 #define LINE_FOLLOW_MODE 1
 #define JUMP_GAP_MODE 2
-#define WALL_FOLLOW_MODE 3
-#define ROTATE_PUSH_MODE 4
+// #define WALL_FOLLOW_MODE 3
+// #define ROTATE_PUSH_MODE 4
 
-#define ROTATE_DELAY 1000  // milliseconds to rotate once a line is found before resuming line following.
+#define ROTATE_DELAY 750  // milliseconds to rotate once a line is found before resuming line following.
 #define FORWARDS_DELAY 500 // milliseconds to drive forward after finding the line before rotating.
 
 /* ---------END STATE ENCODING---------- */
@@ -78,11 +78,11 @@ void selectState()
   case JUMP_GAP_MODE:
     jump_gap();
     break;
-  case WALL_FOLLOW_MODE:
-    wall_follow();
-    break;
-  case ROTATE_PUSH_MODE:
-    break; // TODO: implement rotate push mode
+  // case WALL_FOLLOW_MODE:
+  //   wall_follow();
+  //   break;
+  // case ROTATE_PUSH_MODE:
+  //   break; // TODO: implement rotate push mode
   case FINISH_MODE:
     finish();
     break;
@@ -124,8 +124,9 @@ void setMotorState(int _state)
 
 void finish()
 {
-  Serial0.println("Finished!");
+  Serial0.print("Finish - ");
   setMotorState(STATE_HALT);
+  Serial0.println("Finished!!!");
   while (true)
   {
   } // do nothing
@@ -134,6 +135,7 @@ void finish()
 void line_follow()
 {
   bool stop_flag = false; // if no line or a stop line is detected, set to true to exit loop.
+  state = STATE_FORWARD;
 
   while (!stop_flag)
   {
@@ -169,7 +171,7 @@ void line_follow()
     if (sensor_total < 500 || sensor_total > 3000)
     {
       stop_flag = true;
-      Serial0.println("No line detected!");
+      Serial0.println("No line detected, move to next state.");
       next_state = STATE_HALT;
     }
     state = next_state;
@@ -198,52 +200,55 @@ void jump_gap()
     }
   }
 
-  motors.setSpeeds(SPEED_MAX, SPEED_MAX);
-  delay(FORWARDS_DELAY);
+  // motors.setSpeeds(SPEED_MAX, SPEED_MAX);
+  // delay(FORWARDS_DELAY);
 
   // potential alternative to above, drive forwards until driving past line, then rotate.
-  // sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
-  // while (sensor_total > 2000)
-  // {
-  //   position = reflectanceSensors.readLine(sensors);
-  //   sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
-  //   setMotorState(STATE_FORWARD);
-  // }
+  sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
+  while (sensor_total > 500)
+  {
+    position = reflectanceSensors.readLine(sensors);
+    sensor_total = (sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4] + sensors[5]);
+    setMotorState(STATE_FORWARD);
+  }
+  // Serial0.println(" past line");
 
   motors.setSpeeds(-SPEED_MAX, SPEED_MAX);
   delay(ROTATE_DELAY);
+  setMotorState(STATE_FORWARD);
+  delay(FORWARDS_DELAY);
   setMotorState(STATE_HALT); // line detected, stop and exit.
 }
 
-void wall_follow()
-{
-  // get initial sensor readings...
-  position = reflectanceSensors.readLine(sensors);
-  bool line_detected = false;
-  while (!line_detected)
-  {
-    position = reflectanceSensors.readLine(sensors); // refresh sensor readings each loop.
+// void wall_follow()
+// {
+//   // get initial sensor readings...
+//   position = reflectanceSensors.readLine(sensors);
+//   bool line_detected = false;
+//   while (!line_detected)
+//   {
+//     position = reflectanceSensors.readLine(sensors); // refresh sensor readings each loop.
 
-    if ((sensors[0] + sensors[5]) < 500)
-    {
-      next_state = STATE_FORWARD;
-    }
-    else if (sensors[0] > 300)
-    {
-      next_state = STATE_RIGHT;
-    }
-    else if (sensors[5] > 300)
-    {
-      next_state = STATE_LEFT;
-    }
+//     if ((sensors[0] + sensors[5]) < 500)
+//     {
+//       next_state = STATE_FORWARD;
+//     }
+//     else if (sensors[0] > 300)
+//     {
+//       next_state = STATE_RIGHT;
+//     }
+//     else if (sensors[5] > 300)
+//     {
+//       next_state = STATE_LEFT;
+//     }
 
-    if ((sensors[1] + sensors[2] + sensors[3] + sensors[4]) > 500)
-    {
-      line_detected = true;
-    }
+//     if ((sensors[1] + sensors[2] + sensors[3] + sensors[4]) > 500)
+//     {
+//       line_detected = true;
+//     }
 
-    setMotorState(next_state);
-  }
-}
+//     setMotorState(next_state);
+//   }
+// }
 
 #include "zumo_driver.h"

@@ -54,7 +54,7 @@ void setup()
   {
     reflectanceSensors.calibrate();
     delay(20);
-    if (i % 10 = 0) // print every 10th line
+    if (i % 10 == 0) // print every 10th line
     {
       Serial.println(i);
       Serial0.println(i);
