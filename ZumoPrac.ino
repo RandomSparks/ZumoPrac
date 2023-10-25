@@ -1,6 +1,6 @@
 #include "zumo_state.h"
 
-#define SPEED_MAX 200
+#define SPEED_MAX 180
 #define SPEED_HALT 0
 
 /* -----------STATE ENCODING---------- */
@@ -20,7 +20,7 @@
 // #define WALL_FOLLOW_MODE 3
 // #define ROTATE_PUSH_MODE 4
 
-#define ROTATE_DELAY 750  // milliseconds to rotate once a line is found before resuming line following.
+#define ROTATE_DELAY 500  // milliseconds to rotate once a line is found before resuming line following.
 #define FORWARDS_DELAY 500 // milliseconds to drive forward after finding the line before rotating.
 
 /* ---------END STATE ENCODING---------- */
@@ -213,7 +213,7 @@ void jump_gap()
   }
   // Serial0.println(" past line");
 
-  motors.setSpeeds(-SPEED_MAX, SPEED_MAX);
+  motors.setSpeeds(SPEED_MAX, -SPEED_MAX);
   delay(ROTATE_DELAY);
   setMotorState(STATE_FORWARD);
   delay(FORWARDS_DELAY);
